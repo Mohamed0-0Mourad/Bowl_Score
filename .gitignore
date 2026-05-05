@@ -9,7 +9,7 @@
 /dataSources/
 /dataSources.local.xml
 
-data/
+cv-pipeline/data/
 .venv/
 *.env
 .idea/
