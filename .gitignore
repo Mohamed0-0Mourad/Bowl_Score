@@ -9,7 +9,7 @@
 /dataSources/
 /dataSources.local.xml
 
-/data/
-/.venv/
+data/
+.venv/
 *.env
-/.idea/
+.idea/
