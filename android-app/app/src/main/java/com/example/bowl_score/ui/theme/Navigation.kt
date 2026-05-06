@@ -1,10 +1,11 @@
-package com.example.bowl_score.ui
+package com.example.bowl_score.ui.theme
 
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.bowl_score.ui.BowlingViewModel
 
 sealed class Screen(val route: String) {
     object Home : Screen("home")
@@ -28,16 +29,20 @@ fun BowlingVisionApp() {
             com.example.bowl_score.ui.screens.HomeScreen(navController)
         }
         composable(Screen.PlayerMode.route) {
-            // We will build this one later, keep it empty for now!
+            com.example.bowl_score.ui.screens.PlayerModeScreen(navController)
         }
-        composable(Screen.Setup.route + "/{mode}") { backStackEntry ->
-            val mode = backStackEntry.arguments?.getString("mode")?.toInt() ?: 1
-            com.example.bowl_score.ui.screens.SetupScreen(navController, mode)
+        composable(Screen.Setup.route) { backStackEntry ->
+            val modeString = backStackEntry.arguments?.getString("mode") ?: "1"
+            val mode = modeString.toIntOrNull() ?: 1
+            com.example.bowl_score.ui.screens.SetupScreen(navController, mode, viewModel)
         }
         composable(Screen.Arena.route) {
-            // The massive SurfaceView logic will go here
+            com.example.bowl_score.ui.screens.ArenaScreen(
+                navController = navController,
+                viewModel = viewModel
+            )
         }
-        composable(Screen.Celebration.route + "/{winner}") { backStackEntry ->
+        composable(Screen.Celebration.route) { backStackEntry ->
             val winner = backStackEntry.arguments?.getString("winner") ?: "Unknown"
             com.example.bowl_score.ui.screens.CelebrationScreen(navController, winner)
         }

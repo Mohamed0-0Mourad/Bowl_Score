@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.bowl_score.ui.Screen
+import com.example.bowl_score.ui.theme.Screen
 import com.example.bowl_score.ui.theme.DeepViolet
 import com.example.bowl_score.ui.theme.ElectricPurple
 
@@ -34,7 +34,7 @@ fun HomeScreen(navController: NavHostController) {
     val context = LocalContext.current
 
     Box(
-        modifier = Modifier.fillMaxSize().background(DeepViolet),
+        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -51,9 +51,7 @@ fun HomeScreen(navController: NavHostController) {
             Spacer(modifier = Modifier.height(16.dp))
 
             FunkyButton("Load from Gallery") {
-                // Currently navigating directly to Setup for testing.
-                // Later we will route to PlayerMode first!
-                navController.navigate(Screen.Setup.createRoute(1))
+                navController.navigate(Screen.PlayerMode.route)
             }
         }
     }

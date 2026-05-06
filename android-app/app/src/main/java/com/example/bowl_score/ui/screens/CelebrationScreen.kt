@@ -29,7 +29,7 @@ fun CelebrationScreen(navController: NavHostController, winner: String) {
     )
 
     Box(
-        modifier = Modifier.fillMaxSize().background(DeepViolet),
+        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         Text(
