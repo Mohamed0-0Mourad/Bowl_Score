@@ -39,7 +39,7 @@ fun HomeScreen(navController: NavHostController) {
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = "BowlingVision",
+                text = "Bowl Score",
                 style = MaterialTheme.typography.displayLarge,
                 color = ElectricPurple
             )
