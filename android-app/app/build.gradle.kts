@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
@@ -36,22 +37,33 @@ android {
     androidResources {
         noCompress += "tflite"
     }
+    buildFeatures {
+        compose = true
+        viewBinding = true // Helpful for our SurfaceView later
+    }
 }
 
 dependencies {
+    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.material)
+    implementation(libs.tensorflow.lite)
+    implementation(libs.tensorflow.lite.gpu)
+    implementation(libs.tensorflow.lite.support)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
 
-    // TensorFlow Lite Core and Vision libraries
-    implementation("org.tensorflow:tensorflow-lite:2.14.0")
-    implementation("org.tensorflow:tensorflow-lite-support:0.4.4")
-
-    // Optional but highly recommended: TFLite GPU Delegate for hardware acceleration
-    implementation("org.tensorflow:tensorflow-lite-gpu:2.14.0")
+    // Compose Bill of Materials (BOM)
+    val composeBom = platform("androidx.compose:compose-bom:2024.02.00")
+    implementation(composeBom)
 }
