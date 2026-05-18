@@ -1,14 +1,10 @@
 # BowlScore
-
+Demo on test scene (not existent in training dataset).
 <div align="center">
-  <video src="[INSERT_GITHUB_ASSET_LINK_HERE]" width="600" />
+  <video src="https://github.com/user-attachments/assets/9d8801d1-14bd-4c02-aefa-048726d11d27" width="600" />
 </div>
 
-**Real-time edge AI tracking system for autonomous RC car bowling competitions.** Runs locally on budget Android hardware with zero network dependency and no frame drops.
-
----
-
-## Tech Stack
+**A real-time edge AI tracking system for physical RC car bowling.** Built for maximum performance, BowlScore runs entirely offline on budget Android hardware, delivering flawless tracking with zero network dependency and zero frame drops.
 
 ![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)
 ![Jetpack Compose](https://img.shields.io/badge/Jetpack_Compose-4285F4?style=for-the-badge&logo=android&logoColor=white)
@@ -18,142 +14,82 @@
 
 ---
 
-## Key Features
+## Why BowlScore Stands Out
 
 ### **Head-to-Head Multiplayer**
+> A built-in dual-player competitive mode where contestants select distinct neon accent colors (Electric Purple, Neon Pink) to track their individual runs. The system tracks the RC car trajectory, automatically computes fallen pin counts, and determines the winner with live score synchronization.
 
-Dual-player competitive mode where each contestant selects a distinct neon accent color (electric purple, neon pink) to track their individual RC car trajectory in real-time. The system automatically computes fallen pin counts and winner determination across multiple lanes simultaneously, with live score synchronization and replay analysis.
+### **Smart Frame Sampling & Buttery-Smooth Physics**
+> To maintain a blazing-fast 20-30 FPS on edge hardware, the AI model intentionally samples only keyframes. You never notice the gaps because they are seamlessly bridged using a custom Alpha-Beta-Gamma kinematic tracker. This ensures the digital trajectory lines perfectly match the physical drifts, curves, and high-speed momentum of the RC car. 
 
-### **Smart Frame Sampling**
-
-The inference pipeline intentionally operates at a sparse keyframe cadence (one detection every 250 milliseconds) while rendering continuously at 30 FPS. This deliberate undersampling reduces CPU load by up to 5x compared to per-frame inference, allowing complex deep learning models to run without thermal throttling or memory pressure on constrained hardware.
-
-### **Buttery-Smooth Physics**
-
-A custom Alpha-Beta-Gamma kinematic tracker seamlessly interpolates object trajectories between sparse AI detections. The result is a fluid visual experience where neon trajectory lines perfectly track RC car motion, curves, and drifts with zero frame drops and no perceptible latency.
+### **Zero-Allocation Architecture**
+> Mobile devices crash when memory fills up. BowlScore uses a "Draw and Drop" streaming pipeline that completely eliminates garbage collection stalls. Frame buffers are reused in a strict circular queue, ensuring a perfectly flat memory profile even under sustained inference load.
 
 ---
 
 ## Under the Hood
 
-> **This system runs entirely on a Realme C11 (3GB RAM, MediaTek Helio G35).** No cloud backend. No API calls. No streaming delays. All computation is local and deterministic.
+> **This system runs entirely on a Realme C11 (3GB RAM, MediaTek Helio G35).** No cloud backend. No API calls. All computation is local, deterministic, and highly optimized for budget silicon.
 
-The architecture combines hardware-accelerated video decoding (via MediaMetadataRetriever) with a zero-allocation streaming pipeline that reuses frame buffers in a circular queue. This eliminates garbage collection stalls and ensures consistent 30 FPS presentation even under sustained inference load.
+When deploying to edge devices, hardware fragmentation is the ultimate bottleneck. After discovering the target MediaTek SoC lacked native FP16 GPU support, we pragmatically pivoted the architecture. We combined hardware-accelerated video decoding with a highly optimized XNNPACK CPU pipeline running quantized YOLO26n models. The result is a production-grade application that avoids thermal throttling and maintains a strict 20-30 FPS visual output.
 
-YOLO26n detection models are quantized to INT8 and deployed via TensorFlow Lite with XNNPACK CPU delegation. Initial GPU acceleration attempts were pragmatically abandoned after discovering the target SoC lacks native FP16 support, but the final CPU-only solution achieves production-grade latency and reliability.
-
-**For the full architectural deep-dive, mathematical formulations, and hardware optimization strategies, see the academic report:** [BowlScore_Report.pdf](report/BowlScore_Report.pdf)
+**For the full architectural deep-dive, mathematical formulations, and hardware optimization strategies, read the official engineering report:** **[Read the BowlScore Technical Report (PDF)](report/BowlScore_Report.pdf)**
 
 ---
 
-## Quick Start
+## Technical Specifications & Performance
 
-### Clone the Repository
-
-```bash
-git clone https://github.com/Mohamed0-0Mourad/Bowl_Score.git
-cd Bowl_Score/android-app
-```
-
-### Build the APK
-
-```bash
-# Open the project in Android Studio
-# Select Build > Build Bundle(s) / APK(s) > Build APK(s)
-
-# Or via Gradle CLI:
-./gradlew assembleDebug
-```
-
-### Deploy to Device
-
-```bash
-adb install -r app/build/outputs/apk/debug/app-debug.apk
-```
-
----
-
-## Project Structure
-
-```
-Bowl_Score/
-  android-app/          # Jetpack Compose UI and TensorFlow Lite integration
-  cv-pipeline/          # Training scripts, augmentation, and model export utilities
-  report/               # Full academic engineering report (LaTeX)
-```
-
----
-
-## Performance Metrics
-
-- **Real-time Latency:** 28-30 FPS on target device
-- **Keyframe Detection:** 180-220 ms (every 5th frame at 20 FPS)
-- **Memory Peak Usage:** ~320 MB (including frame buffer)
-- **Model Size:** 6.2 MB (YOLOv8n) / 11.3 MB (YOLO26n)
-- **Dataset:** Custom stadium-angle bowling + Roboflow public dataset
-
----
-
-## Model Training
-
-Three distinct model architectures were evaluated:
-
-1. **YOLOv8n (Frozen Backbone)** - mAP50: 0.9868, mAP50-95: 0.6612
-2. **YOLOv8n (Dropout Regularization)** - mAP50: 0.9844, mAP50-95: 0.6519
-3. **YOLO26n (Full Fine-Tuning)** - mAP50: 0.9473, mAP50-95: 0.6563 (selected for motion blur resilience)
-
-Despite marginal accuracy reduction, YOLO26n's superior robustness to motion blur and reduced bounding box jitter under high-speed conditions made it the optimal choice for production deployment. Training curves and confusion matrices are included in the academic report.
-
----
-
-## Research & Documentation
-
-- **Full Technical Report:** [BowlScore_Report.pdf](report/BowlScore_Report.pdf) - Comprehensive system architecture, hardware optimization strategies, and mathematical formulations
-- **Dataset Links:**
+- **Inference Speed:** 20-30 FPS sustained on target budget device.
+- **Memory Footprint:** Flatlined at ~320 MB peak (zero heap accumulation).
+- **Model Architecture:** YOLO26n (Full Fine-Tuning). Selected specifically over YOLOv8n due to its superior resilience to motion blur and reduced bounding box jitter at high speeds.
+- **Deployment:** TensorFlow Lite INT16 with XNNPACK CPU delegation.
+- **Dataset:** Custom stadium-angle bowling imagery combined with Roboflow public datasets.
   - [Upstream Roboflow Dataset](https://universe.roboflow.com/aryans-workspace-b9ulo/bowling_pin_obb)
   - [Custom Forked Dataset](https://app.roboflow.com/mohamedmoradmagdy1000-gmail-com/bowling_pin_obb-jvd6f/1)
-- **Repository:** https://github.com/Mohamed0-0Mourad/Bowl_Score.git
 
 ---
 
-## What Makes This Production-Grade
+## Developer Setup
 
-- **Deterministic Rendering:** Zero-allocation streaming pipeline eliminates garbage collection latency spikes
-- **Graceful Hardware Fallback:** Pragmatic shift from GPU to CPU delegation when hardware constraints emerge
-- **Multiplayer Synchronization:** Frame-accurate score and trajectory state coordination across dual video streams
-- **Edge-First Design:** 100% local inference; no network dependency, no privacy leakage, no cold-start latency
+### 1. Clone the Repository
+
+```bash
+git clone [https://github.com/Mohamed0-0Mourad/Bowl_Score.git](https://github.com/Mohamed0-0Mourad/Bowl_Score.git)
+cd Bowl_Score/android-app
+
+```
+
+### 2. Project Structure
+
+```text
+Bowl_Score/
+  android-app/          # Jetpack Compose UI, DrawThread, and TFLite integration
+  cv-pipeline/          # Training scripts, augmentation, and model export utilities
+  report/               # Full academic engineering report (LaTeX source & PDF)
+
+```
+
+### 3. Build & Deploy
+
+Open the `android-app` folder in Android Studio, or build directly via the Gradle CLI:
+
+```bash
+# Build the APK
+./gradlew assembleDebug
+
+# Deploy to connected device
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+
+```
 
 ---
 
-## Future Enhancements
+## License & Contact
 
-- Dynamic keyframe scheduling based on motion magnitude
-- Temporal model ensembles combining keyframe detections with transformer-based features
-- Specialized quantization for bounding box coordinate precision
-- Multi-threaded inference pipelining with frame-level parallelism
+This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0). You are free to share and adapt the material for non-commercial purposes with appropriate credit.
 
+Have questions, collaboration ideas, or want to discuss edge AI architecture? Reach out:
+
+* **Linktree:** [LinkTree](https://lnk.bio/MohamedMourad)
+* **Bug Reports:** Please open an issue directly on this repository.
 ---
-
-## License
-
-This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0).
-
-You are free to:
-- Share and adapt the material for non-commercial purposes
-- Provide appropriate credit and indicate changes
-
-You are not permitted to:
-- Use the material for commercial purposes
-
-For details, see the [LICENSE](LICENSE) file or visit [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/).
-
----
-
-## Contact
-
-Have questions, collaboration ideas, or want to discuss the architecture? Reach out via:
-
-- **Linktree:** [INSERT_LINKTREE_LINK_HERE]
-
-For technical discussions and bug reports, please open an issue on GitHub.
-
