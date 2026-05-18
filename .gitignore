@@ -13,3 +13,5 @@ cv-pipeline/data/
 .venv/
 *.env
 .idea/
+
+*/best_saved_model/
